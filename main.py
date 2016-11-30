@@ -49,16 +49,8 @@ while run:
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 run = False
-            elif event.key == pygame.K_a:
-                player1Plane.moveLeft(40)
-            elif event.key == pygame.K_d:
-                player1Plane.moveRight(40)
-            elif event.key == pygame.K_w:
-                player1Plane.moveUp(40)
-            elif event.key == pygame.K_s:
-                player1Plane.moveDown(40)
-            elif event.key == pygame.K_SPACE:
-                player1Plane.shoot(all_sprites_list, bullet_group)
+            else:
+                player1Plane.event_parser(event, all_sprites_list, bullet_group)
 
     # --- Game Logic
 

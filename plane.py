@@ -11,13 +11,13 @@ class Plane(pygame.sprite.Sprite):
 
         # loads image
         self.image = pygame.Surface([width, height])
+        # defines flip
+        self.flip = flip
+        # loads image for the bullet
+        self.image = pygame.image.load("plane.png").convert_alpha()
         # checks if player 1 is playing. If yes, flips image vertically
-        if flip:
+        if self.flip:
             self.image = pygame.transform.flip(self.image, False, True)
-        self.image.fill(white)
-        self.image.set_colorkey(white)
-
-        pygame.draw.rect(self.image, color, [0, 0, width, height])
 
         self.rect = self.image.get_rect()
 
@@ -38,29 +38,38 @@ class Plane(pygame.sprite.Sprite):
         self.rect.y += pixels
 
     def shoot(self, all_sprites_list, bullet_group):
-        bullet = Bullet(True)
+        bullet = Bullet(self.flip)
         # set position
         bullet.set_position(self.rect.x, self.rect.y)
         # adds bullets to groups
         all_sprites_list.add(bullet)
         bullet_group.add(bullet)
 
-    def event_parser(self, event):
-
+    # parses events
+    def event_parser(self, event, all_sprites_list, bullet_group):
+        if event.key == pygame.K_a:
+            self.moveLeft(40)
+        elif event.key == pygame.K_d:
+            self.moveRight(40)
+        elif event.key == pygame.K_w:
+            self.moveUp(40)
+        elif event.key == pygame.K_s:
+            self.moveDown(40)
+        elif event.key == pygame.K_SPACE:
+            self.shoot(all_sprites_list, bullet_group)
 
 
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, flip):
         super().__init__()
 
-        # self.image = pygame.Surface([40,40])
-        # self.image.fill(white)
-        # self.image.set_colorkey(white)
+        self.flip = flip
 
+        # loads image for the bullet
         self.image = pygame.image.load("bullet.png").convert_alpha()
 
         # checks if player 1 is playing. If yes, flips image vertically
-        if flip:
+        if self.flip:
             self.image = pygame.transform.flip(self.image, False, True)
 
         self.rect = self.image.get_rect()
@@ -70,4 +79,7 @@ class Bullet(pygame.sprite.Sprite):
         self.rect.y = y
 
     def update(self):
-        self.rect.y += 10
+        if self.flip:
+            self.rect.y += 10
+        else:
+            self.rect.y -= 10
