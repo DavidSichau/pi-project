@@ -45,24 +45,12 @@ class Plane(pygame.sprite.Sprite):
         all_sprites_list.add(bullet)
         bullet_group.add(bullet)
 
-    # parses events
-    def event_parser(self, event, all_sprites_list, bullet_group):
-        if event.key == pygame.K_a:
-            self.moveLeft(40)
-        elif event.key == pygame.K_d:
-            self.moveRight(40)
-        elif event.key == pygame.K_w:
-            self.moveUp(40)
-        elif event.key == pygame.K_s:
-            self.moveDown(40)
-        elif event.key == pygame.K_SPACE:
-            self.shoot(all_sprites_list, bullet_group)
-
 
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, flip):
         super().__init__()
 
+        self.speed = 5
         self.flip = flip
 
         # loads image for the bullet
@@ -80,6 +68,6 @@ class Bullet(pygame.sprite.Sprite):
 
     def update(self):
         if self.flip:
-            self.rect.y += 10
+            self.rect.y += self.speed
         else:
-            self.rect.y -= 10
+            self.rect.y -= self.speed
