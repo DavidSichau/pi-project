@@ -6,7 +6,7 @@ white = (255, 255, 255)
 
 
 class Plane(pygame.sprite.Sprite):
-    def __init__(self, color, width, height, flip):
+    def __init__(self, width, height, flip):
         super().__init__()
 
         # loads image
@@ -14,7 +14,7 @@ class Plane(pygame.sprite.Sprite):
         # defines flip
         self.flip = flip
         # loads image for the bullet
-        self.image = pygame.image.load("plane.png").convert_alpha()
+        self.image = pygame.image.load("plane1.png").convert_alpha()
         # checks if player 1 is playing. If yes, flips image vertically
         if self.flip:
             self.image = pygame.transform.flip(self.image, False, True)
@@ -54,7 +54,7 @@ class Bullet(pygame.sprite.Sprite):
         self.flip = flip
 
         # loads image for the bullet
-        self.image = pygame.image.load("bullet.png").convert_alpha()
+        self.image = pygame.image.load("Rocket.png").convert_alpha()
 
         # checks if player 1 is playing. If yes, flips image vertically
         if self.flip:

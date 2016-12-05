@@ -1,8 +1,7 @@
-import pygame, time, threading
-from threading import Thread
+import pygame, time
 from plane import Plane
-from queue import Queue
 from pygame.locals import *
+from sensehat import SenseHat
 
 pygame.init()
 
@@ -20,14 +19,15 @@ run = True
 shot_ally = False
 shot_enemy = False
 # Speed of ig movement
-tick_loop = 4
+tick_loop = 5
 # Fire rate mods for shots
 fire_rate_ally = 15
 fire_rate_enemy = 15
+
 # define screen
 screen = pygame.display.set_mode((width, height))
 screen.fill(background_colour)
-pygame.display.set_caption("DickShooter")
+pygame.display.set_caption("PlaneGame")
 screen_rect = screen.get_rect()
 
 # defining sprite groups
@@ -38,17 +38,19 @@ bullet_group = pygame.sprite.Group()
 bullet_group_enemy = pygame.sprite.Group()
 
 # Objects
-alliedplane = Plane(green, 40, 40, True)
-enemyPlane = Plane(red, 40, 40, False)
+alliedplane = Plane(40, 40, True)
+enemyPlane = Plane(40, 40, False)
 
 # add objects to list
 all_sprites_list.add(alliedplane, enemyPlane)
 # Both Planes to separate groups
 enemy_group.add(enemyPlane)
 allied_group.add(alliedplane)
+# add sensehat
+sense = SenseHat()
 
 # set Positions
-alliedplane.set_position(160, 40)
+alliedplane.set_position(160, 0)
 enemyPlane.set_position(200, 280)
 
 # Clock
@@ -61,6 +63,7 @@ def fire_rate_checker(fire_looper):
     elif fire_looper < 15:
         return False
 
+
 # makes a repeating shot while keeping  shot loaded
 def fire_rate_loop(shot, fire_count):
     if shot:
@@ -70,7 +73,8 @@ def fire_rate_loop(shot, fire_count):
     elif fire_count < 15:
         fire_count += 1
         return shot, fire_count
-    else: return shot, fire_count
+    else:
+        return shot, fire_count
 
 
 # takes events and parses (long and stupid)
@@ -117,11 +121,12 @@ while run:
         if event.type == pygame.QUIT:
             run = False
 
+    # checks the reload loop
     shot_ally, fire_rate_ally = fire_rate_loop(shot_ally, fire_rate_ally)
     shot_enemy, fire_rate_enemy = fire_rate_loop(shot_enemy, fire_rate_enemy)
 
     # parses events for both players (fricking config this shit, i dunno)
-    if tick_loop == 4:
+    if tick_loop == 5:
         if pygame.key.get_pressed():
             event_parser(alliedplane)
             event_parser(enemyPlane)
