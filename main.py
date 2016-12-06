@@ -1,7 +1,7 @@
 import pygame, time
 from plane import Plane
 from pygame.locals import *
-from sensehat import SenseHat
+from sense_hat import SenseHat, ACTION_PRESSED, ACTION_HELD, ACTION_RELEASED
 
 pygame.init()
 
@@ -61,6 +61,9 @@ def fire_rate_checker(fire_looper):
     if fire_looper == 15:
         return True
     elif fire_looper < 15:
+
+
+
         return False
 
 
@@ -98,6 +101,8 @@ def event_parser(obj):
                 shot_ally = True
 
     elif obj == enemyPlane:
+        make_move(obj)
+        '''
         if pressed[K_ESCAPE]:
             run = False
         elif pressed[K_LEFT]:
@@ -112,6 +117,23 @@ def event_parser(obj):
             if fire_rate_checker(fire_rate_enemy):
                 obj.shoot(all_sprites_list, bullet_group_enemy)
                 shot_enemy = True
+                '''
+
+def make_move(obj):
+    for event in sense.stick.get_events():
+        if event.action == "pressed":
+            if event.direction == "up":
+                    obj.moveUp(40)
+            elif event.direction == "down":
+                    obj.moveDown(40)
+            elif event.direction == "left":
+                    obj.moveLeft(40)
+            elif event.direction == "right":
+                    obj.moveRight(40)
+            elif event.direction == "middle":
+                    if fire_rate_checker(fire_rate_enemy):
+                        obj.shoot(all_sprites_list, bullet_group_enemy)
+                        shot_enemy = True
 
 
 # main loop
