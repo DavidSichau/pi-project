@@ -1,7 +1,11 @@
 import pygame, time
 from plane import Plane
 from pygame.locals import *
+<<<<<<< HEAD
 from sense_hat import SenseHat, ACTION_PRESSED, ACTION_HELD, ACTION_RELEASED
+=======
+# from sensehat import SenseHat
+>>>>>>> d02696611cb1b0028d8b90c42ac1aa60e685d73e
 
 pygame.init()
 
