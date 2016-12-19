@@ -40,8 +40,8 @@ bullet_group = pygame.sprite.Group()
 bullet_group_enemy = pygame.sprite.Group()
 
 # Objects
-alliedplane = Plane(40, 40, True)
-enemyPlane = Plane(40, 40, False)
+alliedplane = Plane(40, 40)
+enemyPlane = Plane(40, 40)
 
 # add objects to list
 all_sprites_list.add(alliedplane, enemyPlane)
@@ -54,6 +54,8 @@ sense = SenseHat()
 # set Positions
 alliedplane.set_position(160, 0)
 enemyPlane.set_position(200, 280)
+alliedplane.set_direction("down")
+enemyPlane.set_direction("up")
 
 # Clock
 clock = pygame.time.Clock()
@@ -91,12 +93,16 @@ def event_parser(obj):
             run = False
         elif pressed[K_a]:
             obj.moveLeft(40)
+            alliedplane.set_direction("left")
         elif pressed[K_d]:
             obj.moveRight(40)
+            alliedplane.set_direction("right")
         elif pressed[K_w]:
             obj.moveUp(40)
+            alliedplane.set_direction("up")
         elif pressed[K_s]:
             obj.moveDown(40)
+            alliedplane.set_direction("down")
         elif pressed[K_SPACE]:
             if fire_rate_checker(fire_rate_ally):
                 obj.shoot(all_sprites_list, bullet_group)
@@ -123,15 +129,19 @@ def event_parser(obj):
 
 def make_move(obj):
     for event in sense.stick.get_events():
-        if event.action == "pressed":
+        if event.action == "held" or event.action == "pressed":
             if event.direction == "up":
                     obj.moveUp(40)
+                    enemyPlane.set_direction("up")
             elif event.direction == "down":
                     obj.moveDown(40)
+                    enemyPlane.set_direction("down")
             elif event.direction == "left":
                     obj.moveLeft(40)
+                    enemyPlane.set_direction("left")
             elif event.direction == "right":
                     obj.moveRight(40)
+                    enemyPlane.set_direction("right")
             elif event.direction == "middle":
                     if fire_rate_checker(fire_rate_enemy):
                         obj.shoot(all_sprites_list, bullet_group_enemy)
@@ -150,9 +160,13 @@ while run:
     shot_enemy, fire_rate_enemy = fire_rate_loop(shot_enemy, fire_rate_enemy)
 
     # parses events for both players (fricking config this shit, i dunno)
-
-    event_parser(alliedplane)
-    event_parser(enemyPlane)
+    if tick_loop == 5:
+        if pygame.key.get_pressed():
+            event_parser(alliedplane)
+            event_parser(enemyPlane)
+            tick_loop = 0
+    else:
+        tick_loop += 1
 
     # --- Game Logic
 

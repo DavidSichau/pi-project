@@ -6,18 +6,22 @@ white = (255, 255, 255)
 
 
 class Plane(pygame.sprite.Sprite):
-    def __init__(self, width, height, flip):
+    def __init__(self, width, height):
         super().__init__()
+
+        self.right = False
+        self.up = False
+        self.left = False
+        self.down = False
+        self.direct = ""
 
         # loads image
         self.image = pygame.Surface([width, height])
-        # defines flip
-        self.flip = flip
         # loads image for the bullet
         self.image = pygame.image.load("plane1.png").convert_alpha()
         # checks if player 1 is playing. If yes, flips image vertically
-        if self.flip:
-            self.image = pygame.transform.flip(self.image, False, True)
+        #if self.flip:
+           # self.image = pygame.transform.flip(self.image, False, True)
 
         self.rect = self.image.get_rect()
 
@@ -25,8 +29,43 @@ class Plane(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
 
-    #def rotate_bullet(angle)
+    def start_direction(self):
+        print("blub")
+        if self.down:
+            self.image = pygame.transform.rotate(self.image, 180)
+            self.down = False
+        if self.right:
+            self.image = pygame.transform.rotate(self.image, 90)
+            self.right = False
+        if self.left:
+            self.image = pygame.transform.rotate(self.image, 270)
+            self.left = False
+
+
+    def set_direction(self, direct):
+        self.start_direction()
+        self.direct = direct
+        if direct == "down" and self.down == False:
+            self.image = pygame.transform.rotate(self.image, 180)
+            self.down = True
+            self.right = False
+            self.up = False
+            self.left = False
         
+        elif direct == "right" and self.right == False:
+            #Anfangsposition
+            self.image = pygame.transform.rotate(self.image, 270)
+            self.right = True
+            self.up = False
+            self.left = False
+            self.down = False
+        elif direct == "left" and self.left == False:
+            #Anfangsposition
+            self.image = pygame.transform.rotate(self.image, 90)
+            self.left = True
+            self.right = False
+            self.up = False
+            self.down = False
 
     def moveRight(self, pixels):
         self.rect.x += pixels
@@ -41,7 +80,7 @@ class Plane(pygame.sprite.Sprite):
         self.rect.y += pixels
 
     def shoot(self, all_sprites_list, bullet_group):
-        bullet = Bullet(self.flip)
+        bullet = Bullet(self.direct)
         # set position
         bullet.set_position(self.rect.x, self.rect.y)
         # adds bullets to groups
@@ -63,10 +102,10 @@ class Bullet(pygame.sprite.Sprite):
         # checks if player 1 is playing. If yes, flips image vertically
         if self.direct == "down":
             self.image = pygame.transform.flip(self.image, False, True)
-        elif self.right:
+        elif self.direct == "right":
+            self.image = pygame.transform.rotate(self.image, 270)
+        elif self.direct == "left":
             self.image = pygame.transform.rotate(self.image, 90)
-
-            #complete next time
 
         self.rect = self.image.get_rect()
 
@@ -75,7 +114,11 @@ class Bullet(pygame.sprite.Sprite):
         self.rect.y = y
 
     def update(self):
-        if self.flip:
+        if self.direct == "down":
             self.rect.y += self.speed
-        else:
+        elif self.direct == "right":
+            self.rect.x += self.speed
+        elif self.direct == "left":
+            self.rect.x -= self.speed
+        elif self.direct == "up":
             self.rect.y -= self.speed
