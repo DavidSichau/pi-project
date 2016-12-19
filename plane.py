@@ -29,6 +29,12 @@ class Plane(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
 
+    def get_posx(self):
+        return self.rect.x
+
+    def get_posy(self):
+        return self.rect.y
+
     def start_direction(self):
         print("blub")
         if self.down:
