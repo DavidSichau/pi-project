@@ -150,13 +150,9 @@ while run:
     shot_enemy, fire_rate_enemy = fire_rate_loop(shot_enemy, fire_rate_enemy)
 
     # parses events for both players (fricking config this shit, i dunno)
-    if tick_loop == 5:
-        if pygame.key.get_pressed():
-            event_parser(alliedplane)
-            event_parser(enemyPlane)
-            tick_loop = 0
-    else:
-        tick_loop += 1
+
+    event_parser(alliedplane)
+    event_parser(enemyPlane)
 
     # --- Game Logic
 

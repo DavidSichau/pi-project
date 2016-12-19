@@ -25,7 +25,7 @@ class Plane(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
 
-    def rotate_bullet(angle)
+    #def rotate_bullet(angle)
         
 
     def moveRight(self, pixels):
@@ -61,7 +61,7 @@ class Bullet(pygame.sprite.Sprite):
         self.image = pygame.image.load("Rocket.png").convert_alpha()
 
         # checks if player 1 is playing. If yes, flips image vertically
-        if self.direct == "down"
+        if self.direct == "down":
             self.image = pygame.transform.flip(self.image, False, True)
         elif self.right:
             self.image = pygame.transform.rotate(self.image, 90)
@@ -76,6 +76,6 @@ class Bullet(pygame.sprite.Sprite):
 
     def update(self):
         if self.flip:
-SS            self.rect.y += self.speed
+            self.rect.y += self.speed
         else:
             self.rect.y -= self.speed
