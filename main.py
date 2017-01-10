@@ -2,7 +2,6 @@ import pygame, time
 from plane import Plane
 from pygame.locals import *
 from pidisplay import PiDisplay
-
 from sense_hat import SenseHat, ACTION_PRESSED, ACTION_HELD, ACTION_RELEASED
 
 
@@ -25,10 +24,14 @@ run = True
 shot_ally = False
 shot_enemy = False
 # Speed of ig movement
-tick_loop = 5
+tick_loop_ally = 5
+tick_loop_enemy = 5
 # Fire rate mods for shots
 fire_rate_ally = 15
 fire_rate_enemy = 15
+#Lebe
+lives_ally = 3
+lives_enemy = 3
 
 # define screen
 screen = pygame.display.set_mode((width, height))
@@ -83,6 +86,7 @@ def fire_rate_loop(shot, fire_count):
         return shot, fire_count
     elif fire_count < 15:
         fire_count += 1
+        
         return shot, fire_count
     else:
         return shot, fire_count
@@ -137,26 +141,24 @@ def event_parser(obj):
 
 def make_move(obj):
     for event in sense.stick.get_events():
-        if event.action == "pressed":
+        if event.action == "pressed" or event.action == "held" :
             sense.clear()
             if event.direction == "up":
-                    obj.moveUp(40)
-                    enemyPlane.set_direction("up")
+                        obj.moveUp(40)
+                        enemyPlane.set_direction("up")
             elif event.direction == "down":
-                    obj.moveDown(40)
-                    enemyPlane.set_direction("down")
+                        obj.moveDown(40)
+                        enemyPlane.set_direction("down")
             elif event.direction == "left":
-                    obj.moveLeft(40)
-                    enemyPlane.set_direction("left")
+                        obj.moveLeft(40)
+                        enemyPlane.set_direction("left")
             elif event.direction == "right":
-                    obj.moveRight(40)
-                    enemyPlane.set_direction("right")
-        elif event.action == "held" or event.action == "pressed":
-            sense.clear()          
-            if event.direction == "middle":
-                if fire_rate_checker(fire_rate_enemy):
-                        obj.shoot(all_sprites_list, bullet_group_enemy)
-                        shot_enemy = True
+                        obj.moveRight(40)
+                        enemyPlane.set_direction("right")       
+            elif event.direction == "middle":
+                    if fire_rate_checker(fire_rate_enemy):
+                            obj.shoot(all_sprites_list, bullet_group_enemy)
+                            shot_enemy = True
 
 
 # main loop
@@ -171,13 +173,18 @@ while run:
     shot_enemy, fire_rate_enemy = fire_rate_loop(shot_enemy, fire_rate_enemy)
 
     # parses events for both players (fricking config this shit, i dunno)
-    if tick_loop == 5:
+    if tick_loop_ally == 5:
         if pygame.key.get_pressed():
             event_parser(alliedplane)
-            event_parser(enemyPlane)
-            tick_loop = 0
+            tick_loop_ally = 0
     else:
-        tick_loop += 1
+        tick_loop_ally += 1
+
+    if tick_loop_enemy == 5:
+        event_parser(enemyPlane)
+        tick_loop_enemy = 0
+    else:
+        tick_loop_enemy += 1
 
     # --- Game Logic
 
@@ -185,15 +192,41 @@ while run:
     plane_collision = pygame.sprite.spritecollide(alliedplane, enemy_group, False)
     bullet_collision = pygame.sprite.groupcollide(bullet_group, enemy_group, False, False)
     bullet_collision_enemy = pygame.sprite.groupcollide(bullet_group_enemy, allied_group, False, False)
-    for Plane in plane_collision or bullet_collision or bullet_collision_enemy:
-        print("Crash!!!")
-        run = False
-        sense.clear()
+    for Plane in bullet_collision:
+        lives_enemy -= 1
+    for Plane in bullet_collision_enemy:
+        lives_ally -= 1
+    for Plane in plane_collision:
+        sense.show_message("CRASH!!!")
+        alliedplane.set_position(160, 0)
+        enemyPlane.set_position(200, 280)
 
+    if lives_enemy == 0:
+        sense.show_message("Ally Wins!!!", text_colour = green)
+    if lives_ally == 0:
+        sense.show_message("Enemy Wins!!!", text_colour = red)
+    
     # Clamp Screen
+    
     alliedplane.rect.clamp_ip(screen_rect)
     enemyPlane.rect.clamp_ip(screen_rect)
 
+    for Bullet in bullet_group:
+        if Bullet.rect.x == 280 or Bullet.rect.x == 0:
+            all_sprites_list.remove(Bullet)
+            bullet_group.remove(Bullet)
+        elif Bullet.rect.y == 280 or Bullet.rect.y == 0:
+            all_sprites_list.remove(Bullet)
+            bullet_group.remove(Bullet)
+            
+    for Bullet in bullet_group_enemy:
+        if Bullet.rect.x == 280 or Bullet.rect.x == 0:
+            all_sprites_list.remove(Bullet)
+            bullet_group_enemy.remove(Bullet)
+        elif Bullet.rect.y == 280 or Bullet.rect.y == 0:
+            all_sprites_list.remove(Bullet)
+            bullet_group_enemy.remove(Bullet)
+            
     # Update Sprite list
     all_sprites_list.update()
     screen.fill(blue)
@@ -204,10 +237,10 @@ while run:
     # Update Display
     pygame.display.update()
     clock.tick(60)
-    display.set_ally_pos(alliedplane.get_posx(), alliedplane.get_posy(), green)
-    display.set_ally_pos(enemyPlane.get_posx(), enemyPlane.get_posy(), red)
-    
+    display.set_pos(alliedplane.get_posx(), alliedplane.get_posy(), green)
+    display.set_pos(enemyPlane.get_posx(), enemyPlane.get_posy(), red) 
     # makes sure all events are handled
     pygame.event.pump()
-
+    
+sense.clear()
 pygame.quit()

@@ -1,9 +1,14 @@
 import pygame, time, threading
 from pygame.locals import *
+from pidisplay import PiDisplay
+from sense_hat import SenseHat
 
 red = (255, 0, 0)
 white = (255, 255, 255)
+blue = (0, 0, 255)
 
+display = PiDisplay(blue)
+sense = SenseHat()
 
 class Plane(pygame.sprite.Sprite):
     def __init__(self, width, height):
@@ -118,7 +123,7 @@ class Bullet(pygame.sprite.Sprite):
     def set_position(self, x, y):
         self.rect.x = x
         self.rect.y = y
-
+            
     def update(self):
         if self.direct == "down":
             self.rect.y += self.speed
@@ -128,3 +133,4 @@ class Bullet(pygame.sprite.Sprite):
             self.rect.x -= self.speed
         elif self.direct == "up":
             self.rect.y -= self.speed
+        display.set_pos_rocket(self.rect.x, self.rect.y, blue)
