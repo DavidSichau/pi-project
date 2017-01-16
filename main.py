@@ -190,21 +190,59 @@ while run:
 
     # Activate Collision
     plane_collision = pygame.sprite.spritecollide(alliedplane, enemy_group, False)
-    bullet_collision = pygame.sprite.groupcollide(bullet_group, enemy_group, False, False)
-    bullet_collision_enemy = pygame.sprite.groupcollide(bullet_group_enemy, allied_group, False, False)
+    bullet_collision = pygame.sprite.groupcollide(bullet_group, enemy_group, True, False)
+    bullet_collision_enemy = pygame.sprite.groupcollide(bullet_group_enemy, allied_group, True, False)
+
     for Plane in bullet_collision:
+        print(lives_enemy)
         lives_enemy -= 1
+        alliedplane.set_position(160, 0)
+        enemyPlane.set_position(200, 280)
+        sense.show_message(str(lives_enemy), text_colour = red)
+
+        for Bullet in bullet_group:
+                all_sprites_list.remove(Bullet)
+                bullet_group.remove(Bullet)
+ 
+        for Bullet in bullet_group_enemy:
+                all_sprites_list.remove(Bullet)
+                bullet_group_enemy.remove(Bullet)
+
+            
     for Plane in bullet_collision_enemy:
+        print(lives_ally)
         lives_ally -= 1
+        alliedplane.set_position(160, 0)
+        enemyPlane.set_position(200, 280)
+        sense.show_message(str(lives_ally), text_colour = green)
+
+        for Bullet in bullet_group:
+                all_sprites_list.remove(Bullet)
+                bullet_group.remove(Bullet)
+ 
+        for Bullet in bullet_group_enemy:
+                all_sprites_list.remove(Bullet)
+                bullet_group_enemy.remove(Bullet)
+        
     for Plane in plane_collision:
         sense.show_message("CRASH!!!")
         alliedplane.set_position(160, 0)
         enemyPlane.set_position(200, 280)
 
+        for Bullet in bullet_group:
+                all_sprites_list.remove(Bullet)
+                bullet_group.remove(Bullet)
+ 
+        for Bullet in bullet_group_enemy:
+                all_sprites_list.remove(Bullet)
+                bullet_group_enemy.remove(Bullet)
+
     if lives_enemy == 0:
         sense.show_message("Ally Wins!!!", text_colour = green)
+        run = False
     if lives_ally == 0:
         sense.show_message("Enemy Wins!!!", text_colour = red)
+        run = False
     
     # Clamp Screen
     
@@ -212,18 +250,18 @@ while run:
     enemyPlane.rect.clamp_ip(screen_rect)
 
     for Bullet in bullet_group:
-        if Bullet.rect.x == 280 or Bullet.rect.x == 0:
+        if Bullet.rect.x > 280 or Bullet.rect.x < 0:
             all_sprites_list.remove(Bullet)
             bullet_group.remove(Bullet)
-        elif Bullet.rect.y == 280 or Bullet.rect.y == 0:
+        elif Bullet.rect.y > 280 or Bullet.rect.y < 0:
             all_sprites_list.remove(Bullet)
             bullet_group.remove(Bullet)
             
     for Bullet in bullet_group_enemy:
-        if Bullet.rect.x == 280 or Bullet.rect.x == 0:
+        if Bullet.rect.x > 280 or Bullet.rect.x < 0:
             all_sprites_list.remove(Bullet)
             bullet_group_enemy.remove(Bullet)
-        elif Bullet.rect.y == 280 or Bullet.rect.y == 0:
+        elif Bullet.rect.y > 280 or Bullet.rect.y < 0:
             all_sprites_list.remove(Bullet)
             bullet_group_enemy.remove(Bullet)
             
