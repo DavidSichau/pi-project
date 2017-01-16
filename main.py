@@ -47,8 +47,8 @@ bullet_group = pygame.sprite.Group()
 bullet_group_enemy = pygame.sprite.Group()
 
 # Objects
-alliedplane = Plane(40, 40)
-enemyPlane = Plane(40, 40)
+alliedplane = Plane(40, 40, "allyPlane.png")
+enemyPlane = Plane(40, 40, "enemyPlane.png")
 
 # add objects to list
 all_sprites_list.add(alliedplane, enemyPlane)
@@ -159,7 +159,7 @@ def make_move(obj):
                     if fire_rate_checker(fire_rate_enemy):
                             obj.shoot(all_sprites_list, bullet_group_enemy)
                             shot_enemy = True
-
+            
 
 # main loop
 while run:
@@ -240,9 +240,11 @@ while run:
     if lives_enemy == 0:
         sense.show_message("Ally Wins!!!", text_colour = green)
         run = False
+        sense.clear()
     if lives_ally == 0:
         sense.show_message("Enemy Wins!!!", text_colour = red)
         run = False
+        sense.clear()
     
     # Clamp Screen
     
@@ -279,6 +281,8 @@ while run:
     display.set_pos(enemyPlane.get_posx(), enemyPlane.get_posy(), red) 
     # makes sure all events are handled
     pygame.event.pump()
-    
+
+
+   
 sense.clear()
 pygame.quit()

@@ -11,7 +11,7 @@ display = PiDisplay(blue)
 sense = SenseHat()
 
 class Plane(pygame.sprite.Sprite):
-    def __init__(self, width, height):
+    def __init__(self, width, height, image):
         super().__init__()
 
         self.right = False
@@ -23,7 +23,7 @@ class Plane(pygame.sprite.Sprite):
         # loads image
         self.image = pygame.Surface([width, height])
         # loads image for the bullet
-        self.image = pygame.image.load("plane1.png").convert_alpha()
+        self.image = pygame.image.load(image).convert_alpha()
         # checks if player 1 is playing. If yes, flips image vertically
         #if self.flip:
            # self.image = pygame.transform.flip(self.image, False, True)
@@ -134,3 +134,4 @@ class Bullet(pygame.sprite.Sprite):
         elif self.direct == "up":
             self.rect.y -= self.speed
         display.set_pos_rocket(self.rect.x, self.rect.y, blue)
+
