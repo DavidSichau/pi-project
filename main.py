@@ -15,6 +15,7 @@ blue = (0, 0, 255)
 green = (0, 255, 0)
 black = (0,0,0)
 
+# activates led matrix
 display = PiDisplay(background_colour)
 
 # Font for text
@@ -71,16 +72,14 @@ enemyPlane.set_direction("up")
 # Clock
 clock = pygame.time.Clock()
 
+# --- Functions ---
 
+#Clamps fire rate
 def fire_rate_checker(fire_looper):
     if fire_looper == 15:
         return True
     elif fire_looper < 15:
-
-
-
-        return False
-
+		return False
 
 # makes a repeating shot while keeping  shot loaded
 def fire_rate_loop(shot, fire_count):
@@ -96,7 +95,7 @@ def fire_rate_loop(shot, fire_count):
         return shot, fire_count
 
 
-# takes events and parses (long and stupid)
+# moves keyboard player
 def event_parser(obj):
     pressed = pygame.key.get_pressed()
     global run, shot_ally, shot_enemy
@@ -127,6 +126,7 @@ def event_parser(obj):
     elif obj == enemyPlane:
         make_move(obj)
 
+# moves joystick player
 def make_move(obj):
         for event in sense.stick.get_events():
             if event.action == "pressed" or event.action == "held" :
@@ -148,6 +148,7 @@ def make_move(obj):
                                 obj.shoot(all_sprites_list, bullet_group_enemy)
                                 shot_enemy = True
 
+# prints winner at end of game onto screen
 def print_screen(winner):
     win_a = myFont.render("Ally Wins!!!", 1, green)
     win_e = myFont.render("Enemy Wins!!!", 1, red)
@@ -159,12 +160,14 @@ def print_screen(winner):
         screen.blit(win_e, (85,120))
         pygame.display.flip()
 
+# prints live count after lives are lost
 def print_lives(numb, colour, pos):
     number = myFont.render(str(numb), 1, colour)
     screen.blit(number, pos)
     pygame.display.flip()
 
-# main loop
+# --- main loop ---
+
 while run:
     # closes program if "X" is pressed
     for event in pygame.event.get():
@@ -175,7 +178,7 @@ while run:
     shot_ally, fire_rate_ally = fire_rate_loop(shot_ally, fire_rate_ally)
     shot_enemy, fire_rate_enemy = fire_rate_loop(shot_enemy, fire_rate_enemy)
 
-    # parses events for both players (fricking config this shit, i dunno)
+    # stops quick movement (does not work for joystick player)
     if tick_loop_ally == 5:
         if pygame.key.get_pressed():
             event_parser(alliedplane)
@@ -195,9 +198,10 @@ while run:
     plane_collision = pygame.sprite.spritecollide(alliedplane, enemy_group, False)
     bullet_collision = pygame.sprite.groupcollide(bullet_group, enemy_group, True, False)
     bullet_collision_enemy = pygame.sprite.groupcollide(bullet_group_enemy, allied_group, True, False)
-
+	
+	# if there is plane with bullet collision, do this
     for Plane in bullet_collision:
-        print(lives_enemy)
+        # print(lives_enemy)
         lives_enemy -= 1
         alliedplane.set_position(160, 0)
         enemyPlane.set_position(200, 280)
@@ -214,7 +218,7 @@ while run:
                 all_sprites_list.remove(Bullet)
                 bullet_group_enemy.remove(Bullet)
 
-            
+    # for enemy plane (red)        
     for Plane in bullet_collision_enemy:
         print(lives_ally)
         lives_ally -= 1
@@ -232,7 +236,8 @@ while run:
         for Bullet in bullet_group_enemy:
                 all_sprites_list.remove(Bullet)
                 bullet_group_enemy.remove(Bullet)
-        
+	
+    # Plane collision handling    
     for Plane in plane_collision:
         sense.show_message("CRASH!!!")
         alliedplane.set_position(160, 0)
@@ -247,7 +252,8 @@ while run:
         for Bullet in bullet_group_enemy:
                 all_sprites_list.remove(Bullet)
                 bullet_group_enemy.remove(Bullet)
-
+	
+	# if lives are empty, do this
     if lives_enemy == 0:
         print_screen("ally")
         sense.show_message("Ally Wins!!!", text_colour = green)
@@ -263,7 +269,8 @@ while run:
     
     alliedplane.rect.clamp_ip(screen_rect)
     enemyPlane.rect.clamp_ip(screen_rect)
-
+	
+	# removes bullets if out of border
     for Bullet in bullet_group:
         if Bullet.rect.x > 280 or Bullet.rect.x < 0:
             all_sprites_list.remove(Bullet)
@@ -290,11 +297,11 @@ while run:
     # Update Display
     pygame.display.update()
     clock.tick(60)
+	# draws onto pi
     display.set_pos(alliedplane.get_posx(), alliedplane.get_posy(), green)
     display.set_pos(enemyPlane.get_posx(), enemyPlane.get_posy(), red) 
     # makes sure all events are handled
     pygame.event.pump()
-
     
 sense.clear()
 pygame.quit()

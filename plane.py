@@ -41,7 +41,7 @@ class Plane(pygame.sprite.Sprite):
         return self.rect.y
 
     def start_direction(self):
-        print("blub")
+		#print("blub")
         if self.down:
             self.image = pygame.transform.rotate(self.image, 180)
             self.down = False
